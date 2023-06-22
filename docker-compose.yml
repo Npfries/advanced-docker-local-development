@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  my_service:
+    image: my_service
+    container_name: my_service
+    build:
+      context: .
+      target: ${DOCKER_STAGE}
+    environment:
+      - PORT=3000
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_URL=${DB_URL}
+    ports:
+      - 3000:3000
+    depends_on:
+      - mariadb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 55
+
+  mariadb:
+    image: mariadb:jammy
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: db
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$DB_USER --password=$$DB_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 55

@@ -1,0 +1,6 @@
+services: 
+  my_service:
+    build:
+      target: dev
+    volumes:
+      - "./src/:/app/src/"
