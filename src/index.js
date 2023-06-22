@@ -4,10 +4,10 @@ import { PrismaClient } from "@prisma/client";
 
 const PORT = process.env.PORT ?? 3000;
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   const prisma = new PrismaClient();
-  prisma.$connect();
-  prisma.$disconnect();
+  await prisma.$connect();
+  await prisma.$disconnect();
   res.send("Hello, World!");
 });
 
